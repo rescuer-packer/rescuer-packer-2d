@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=80.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "rescuer-packer-2d"
+version = "0.1.0"
+description = "RescuerPacker for 2d packing task"
+requires-python = ">=3.8"
+readme = "README.md"
+authors = [{name = "Vasily Stolbov a.k.a Kotomord", email = "vasily.v.stolbov@gmail.com"}]
+dependencies = ["rescuer-task", "rescuer-geocore-2d >= 0.1.0"]
