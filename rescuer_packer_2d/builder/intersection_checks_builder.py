@@ -6,9 +6,6 @@ from shapely import Polygon
 from rescuer_packer_2d.builder.rescuer_task_builder import RescuerTaskBuilder
 
 
-
-
-
 def build_intersection_checks(builder: RescuerTaskBuilder):
     linearize_polygons = []
     linearize_numbers = []
@@ -23,15 +20,15 @@ def build_intersection_checks(builder: RescuerTaskBuilder):
     blocks = {}
 
     def callback(pos1, pos2):
-        #polygon
+        # polygon
         p1 = linearize_polygons[pos1][1]
         p2 = linearize_polygons[pos2][1]
 
-        #crop
+        # crop
         cr1 = linearize_numbers[pos1][0]
         cr2 = linearize_numbers[pos2][0]
 
-        #rotation
+        # rotation
         r1 = linearize_numbers[pos1][1]
         r2 = linearize_numbers[pos2][1]
 
@@ -41,7 +38,7 @@ def build_intersection_checks(builder: RescuerTaskBuilder):
         if len(constraints) == 0:
             return
 
-        outer_key = (p1,cr1, p2, cr2)
+        outer_key = (p1, cr1, p2, cr2)
         if outer_key not in blocks:
             blocks[outer_key] = {}
         inner = blocks[outer_key]
@@ -69,24 +66,70 @@ def build_intersection_checks(builder: RescuerTaskBuilder):
                 if len(rls) == 0:
                     raise ValueError("Fast exit - polygons must intersects")
                 builder.task.inequalities.append(
-                    Inequality({}, 1,1, rls)
+                    Inequality({}, 1, 1, rls)
                 )
             else:
                 v_complex[k1] = v1
                 if len(v1) > max_len:
                     max_len = len(v1)
 
+        if len(v_complex) == 0:
+            continue
 
         for k1, v1 in v_complex.items():
             while len(v1) < max_len:
                 v1.append(None)
 
         if max_len == 1:
-            pass
+            for k1, v1 in v_complex.items():
+                rls = []
+                v = v1[0]
+                if builder.key[p1][2] != -1:
+                    rls.append(builder.key[p1][2] + k1[0])
+                if builder.key[p2][2] != -1:
+                    rls.append(builder.key[p2][2] + k1[1])
+                builder.task.inequalities.append(
+                    Inequality({
+                        builder.x[p1]: v[0],
+                        builder.x[p2]: -v[0],
+                        builder.y[p1]: v[1],
+                        builder.y[p2]: -v[1],
+
+                    }, v[2], v[3], rls)
+                )
 
         if max_len > 1:
-            pass
+            builder.task.rescuer_groups.append(max_len)
+            start = builder.rcount
+            builder.rcount += max_len
+            for k1, v1 in v_complex.items():
+                rls_common = []
+                if builder.key[p1][2] != -1:
+                    rls_common.append(builder.key[p1][2] + k1[0])
+                if builder.key[p2][2] != -1:
+                    rls_common.append(builder.key[p2][2] + k1[1])
+                for i in range(max_len):
+                    v = v1[i]
 
+                    rls = [start + i]
+                    rls.extend(rls_common)
+                    if v is None:
+                        builder.task.inequalities.append(
+                            Inequality({
+
+                            }, 1, 1, rls)
+                        )
+                        continue
+
+                    builder.task.inequalities.append(
+                        Inequality({
+                            builder.x[p1]: v[0],
+                            builder.x[p2]: -v[0],
+                            builder.y[p1]: v[1],
+                            builder.y[p2]: -v[1],
+
+                        }, v[2], v[3], rls)
+                    )
 
 
 def _build_pair_constraints(poly1: Polygon, poly2: Polygon, step: float):
@@ -96,11 +139,11 @@ def _build_pair_constraints(poly1: Polygon, poly2: Polygon, step: float):
     ans = []
     for cr in unbounded_constraints:
         mod = abs(cr.kx) + abs(cr.ky)
-        min_val = cr.c - 2*step * mod
+        min_val = cr.c - 2 * step * mod
         if min_val > 0:
             has_unsatisfied = True
             continue
-        max_val = cr.c + 2*step * mod
+        max_val = cr.c + 2 * step * mod
         if max_val <= 0:
             return []
         ans.append((cr.kx, cr.ky, cr.c, max_val))
