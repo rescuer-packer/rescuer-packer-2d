@@ -20,9 +20,15 @@ def build_intersection_checks(builder: RescuerTaskBuilder):
     blocks = {}
 
     def callback(pos1, pos2):
+
+
         # polygon
         p1 = linearize_polygons[pos1][1]
         p2 = linearize_polygons[pos2][1]
+
+        if p1 > p2:
+            callback(pos2, pos1)
+            return
 
         # crop
         cr1 = linearize_numbers[pos1][0]

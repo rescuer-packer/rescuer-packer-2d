@@ -18,6 +18,7 @@ class RescuerTaskBuilder:
             self.x.append(1 + 2*i)
             self.y.append(2 + 2*i)
             self.task.cont_bounds.append([-self.step, self.step])
+            self.task.cont_bounds.append([-self.step, self.step])
             t = len(polys[i])
             if t > 1:
                 self.task.rescuer_groups.append(t)

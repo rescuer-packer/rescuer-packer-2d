@@ -25,7 +25,7 @@ def build_task_polys(task_it: List[List[tuple[float, float, float]]],
         ls = []
         builder = builders[l]
         for i in task_it[l]:
-            ls.append(builder.build(i[0], i[1], i[2]))
+            ls.append(builder.build(i[0], i[1], i[2], False))
         ans.append(ls)
     return ans
 

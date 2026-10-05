@@ -35,6 +35,7 @@ class RectangleContainer(Container):
                 {max_y: 1, min_y: -1},
                 -self.value, 0, []
             ))
+            return
 
         if self.task_type == RectangleContainerTaskType.FIXED_WIDTH:
             builder.task.inequalities.append(Inequality(
@@ -45,6 +46,7 @@ class RectangleContainer(Container):
                 {max_x: 1, min_x: -1},
                 -self.value, 0, []
             ))
+            return
         if self.task_type == RectangleContainerTaskType.ASPECT_RATIO:
             builder.task.inequalities.append(Inequality(
                 {max_x: 1, min_x: -1, 0: -1},
@@ -54,6 +56,7 @@ class RectangleContainer(Container):
                 {max_y: 1, min_y: -1, 0: -self.value},
                 0, 0, []
             ))
+            return
 
         raise ValueError("Unknown task type")
 
@@ -94,8 +97,8 @@ def _build_min_max_x_y(builder: RescuerTaskBuilder) -> tuple[int, int, int, int]
         m = len(ls)
         for j in range(m):
             rs = []
-            if builder.key[i] != -1:
-                rs.append(builder.key[i] + j)
+            if builder.key[i][2] != -1:
+                rs.append(builder.key[i][2] + j)
 
             #  min_x <= bounds[i][j][0] + x[i]
             #  min_x - x[i] - bounds[i][j][0] <= 0
