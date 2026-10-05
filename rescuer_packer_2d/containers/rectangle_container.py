@@ -27,13 +27,33 @@ class RectangleContainer(Container):
         min_x, min_y, max_x, max_y = _build_min_max_x_y(builder)
         # TODO
         if self.task_type == RectangleContainerTaskType.FIXED_HEIGHT:
-            pass
+            builder.task.inequalities.append(Inequality(
+                {max_x: 1, min_x: -1, 0: -1},
+                0, 0, []
+            ))
+            builder.task.inequalities.append(Inequality(
+                {max_y: 1, min_y: -1},
+                -self.value, 0, []
+            ))
 
         if self.task_type == RectangleContainerTaskType.FIXED_WIDTH:
-            return
-
+            builder.task.inequalities.append(Inequality(
+                {max_y: 1, min_y: -1, 0: -1},
+                0, 0, []
+            ))
+            builder.task.inequalities.append(Inequality(
+                {max_x: 1, min_x: -1},
+                -self.value, 0, []
+            ))
         if self.task_type == RectangleContainerTaskType.ASPECT_RATIO:
-            return
+            builder.task.inequalities.append(Inequality(
+                {max_x: 1, min_x: -1, 0: -1},
+                0, 0, []
+            ))
+            builder.task.inequalities.append(Inequality(
+                {max_y: 1, min_y: -1, 0: -self.value},
+                0, 0, []
+            ))
 
         raise ValueError("Unknown task type")
 
