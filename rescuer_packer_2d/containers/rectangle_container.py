@@ -25,7 +25,6 @@ class RectangleContainer(Container):
             builder.task.cont_bounds[0][1] = self.max_score
 
         min_x, min_y, max_x, max_y = _build_min_max_x_y(builder)
-        # TODO
         if self.task_type == RectangleContainerTaskType.FIXED_HEIGHT:
             builder.task.inequalities.append(Inequality(
                 {max_x: 1, min_x: -1, 0: -1},
