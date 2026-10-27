@@ -139,10 +139,10 @@ def _build_min_max_x_y(builder: RescuerTaskBuilder) -> tuple[int, int, int, int]
                         ls[j].convex.bounds[2], up_val, rs
                     )
                 )
-                #  max_y >= bounds[i][j][3] + y[i]
-                #  bounds[i][j][3] + y[i] - max_y <= 0
-                up_val = builder.step + ls[j].convex.bounds[3] - cb[max_y_pos][0]
-                if up_val > 0:
+            #  max_y >= bounds[i][j][3] + y[i]
+            #  bounds[i][j][3] + y[i] - max_y <= 0
+            up_val = builder.step + ls[j].convex.bounds[3] - cb[max_y_pos][0]
+            if up_val > 0:
                     builder.task.inequalities.append(
                         Inequality(
                             {
